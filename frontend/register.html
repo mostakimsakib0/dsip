@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Smart Attendance System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Register Student</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label>Student ID</label>
+                <input type="text" id="studentId" placeholder="e.g. 2260CSE01053" required>
+            </div>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="name" placeholder="Enter full name" required>
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <input type="text" id="department" placeholder="e.g. CSE" required>
+            </div>
+            <div class="form-group">
+                <label>Face Registration</label>
+                <input type="file" id="faceImage" accept="image/*">
+            </div>
+            <button type="submit" class="btn">Register Student</button>
+        </form>
+        <div class="link">
+            Already registered? <a href="login.html">Sign In</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Student registered successfully!');
+            window.location.href = '/dashboard';
+        });
+    </script>
+</body>
+</html>

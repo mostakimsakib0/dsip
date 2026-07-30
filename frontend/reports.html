@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Smart Attendance System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .report-form {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+        .report-form .form-row {
+            display: flex;
+            gap: 20px;
+            align-items: end;
+        }
+        .report-form .form-group {
+            flex: 1;
+        }
+        .report-form .btn {
+            width: auto;
+            padding: 12px 30px;
+            flex: 0 0 auto;
+        }
+        .report-form input[type="date"] {
+            color-scheme: dark;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="navbar">
+            <h1>Smart Attendance</h1>
+            <div class="nav-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/attendance">Live Attendance</a>
+                <a href="/register">Register Student</a>
+                <a href="/reports">Reports</a>
+                <a href="/">Logout</a>
+            </div>
+        </nav>
+
+        <div class="report-form">
+            <h3 style="color:#fff;margin-bottom:20px;">Generate Attendance Report</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" id="endDate">
+                </div>
+                <button class="btn" id="generateCsv">Export CSV</button>
+                <button class="btn" id="generateExcel">Export Excel</button>
+            </div>
+        </div>
+
+        <div class="attendance-table">
+            <h3>Attendance Records</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Confidence</th>
+                    </tr>
+                </thead>
+                <tbody id="reportBody">
+                    <tr>
+                        <td colspan="5" style="text-align:center;color:rgba(255,255,255,0.4);">Select dates and generate report</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
