@@ -1,6 +1,7 @@
 from backend.face_recognition.detector import FaceDetector
 from backend.face_recognition.embedder import FaceEmbedder
 from backend.face_recognition.matcher import FaceMatcher
+from backend.face_recognition.preprocess import Preprocessor
 from backend.database.db_manager import DatabaseManager
 
 
@@ -9,9 +10,16 @@ class FaceRecognizer:
         self.detector = FaceDetector()
         self.embedder = FaceEmbedder()
         self.matcher = FaceMatcher()
+        self.preprocessor = Preprocessor()
         self.db = DatabaseManager()
 
+    def preprocess(self, frame):
+        if self.preprocessor.should_apply():
+            return self.preprocessor.process(frame)
+        return frame
+
     def recognize(self, frame):
+        frame = self.preprocess(frame)
         faces = self.detector.detect(frame)
         results = []
 

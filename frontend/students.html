@@ -3,9 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Smart Attendance System</title>
+    <title>Students - Smart Attendance System</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        body { align-items: flex-start; }
+        .btn-danger {
+            background: linear-gradient(135deg, #d63031, #e17055);
+            padding: 6px 16px;
+            font-size: 13px;
+            width: auto;
+        }
+        .btn-small {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 6px 16px;
+            font-size: 13px;
+            width: auto;
+        }
+        .empty {
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            padding: 30px;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard">
@@ -21,42 +41,24 @@
             </div>
         </nav>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Total Students</h3>
-                <div class="value" id="totalStudents">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Present Today</h3>
-                <div class="value" id="presentToday">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Attendance Rate</h3>
-                <div class="value" id="attendanceRate">0%</div>
-            </div>
-        </div>
-
         <div class="attendance-table">
-            <h3>Today's Attendance</h3>
+            <h3>Registered Students</h3>
             <table>
                 <thead>
                     <tr>
                         <th>Student ID</th>
                         <th>Name</th>
-                        <th>Time</th>
-                        <th>Confidence</th>
+                        <th>Department</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
-                <tbody id="attendanceBody">
-                    <tr>
-                        <td colspan="4" style="text-align:center;color:rgba(255,255,255,0.4);">No attendance records yet</td>
-                    </tr>
+                <tbody id="studentBody">
+                    <tr><td colspan="4" class="empty">Loading...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <script src="js/dashboard.js"></script>
-    <script src="js/logout.js"></script>
+    <script src="js/students.js"></script>
 </body>
 </html>

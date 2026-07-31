@@ -5,6 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Smart Attendance System</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .container {
+            max-width: 480px;
+        }
+        .face-area {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .face-area video,
+        .face-area img {
+            width: 100%;
+            max-height: 260px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            object-fit: cover;
+        }
+        .face-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn-sm {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+        }
+        .btn-capture {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+        }
+        .btn-upload {
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
+            color: #2d3436;
+        }
+        #fileInput {
+            display: none;
+        }
+        .msg {
+            text-align: center;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+        }
+        .msg.ok { background: rgba(0, 184, 148, 0.15); color: #00b894; display: block; }
+        .msg.err { background: rgba(214, 48, 49, 0.15); color: #ff7675; display: block; }
+        .msg.info { background: rgba(102, 126, 234, 0.15); color: #a29bfe; display: block; }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -12,7 +61,7 @@
         <form id="registerForm">
             <div class="form-group">
                 <label>Student ID</label>
-                <input type="text" id="studentId" placeholder="e.g. 2260CSE01053" required>
+                <input type="text" id="studentId" placeholder="e.g. 2260CSE01035" required>
             </div>
             <div class="form-group">
                 <label>Full Name</label>
@@ -24,19 +73,112 @@
             </div>
             <div class="form-group">
                 <label>Face Registration</label>
-                <input type="file" id="faceImage" accept="image/*">
+                <div class="face-area">
+                    <video id="video" autoplay playsinline></video>
+                    <img id="preview" style="display:none;" alt="Captured face">
+                    <div class="face-actions">
+                        <button type="button" class="btn btn-sm btn-capture" id="captureBtn">Capture</button>
+                        <button type="button" class="btn btn-sm btn-upload" id="uploadBtn">Upload Image</button>
+                        <input type="file" id="fileInput" accept="image/*">
+                    </div>
+                </div>
             </div>
-            <button type="submit" class="btn">Register Student</button>
+            <button type="submit" class="btn" id="submitBtn">Register Student</button>
         </form>
+        <div class="msg" id="msg"></div>
         <div class="link">
-            Already registered? <a href="login.html">Sign In</a>
+            Back to <a href="/dashboard">Dashboard</a> &middot; <a href="#" id="logout">Logout</a>
         </div>
     </div>
+    <script src="js/logout.js"></script>
     <script>
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        const video = document.getElementById('video');
+        const preview = document.getElementById('preview');
+        const captureBtn = document.getElementById('captureBtn');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInput = document.getElementById('fileInput');
+        const msg = document.getElementById('msg');
+        let capturedDataUrl = null;
+        let stream = null;
+
+        function showMsg(text, cls) {
+            msg.className = 'msg ' + cls;
+            msg.textContent = text;
+        }
+
+        navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } })
+            .then(s => { stream = s; video.srcObject = s; })
+            .catch(() => showMsg('Camera unavailable - use the Upload Image option instead.', 'info'));
+
+        captureBtn.addEventListener('click', () => {
+            if (!stream) return showMsg('Camera not available. Use Upload Image.', 'err');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            capturedDataUrl = canvas.toDataURL('image/jpeg');
+            preview.src = capturedDataUrl;
+            preview.style.display = 'block';
+            video.style.display = 'none';
+            showMsg('Face captured. You can register now or capture again.', 'ok');
+        });
+
+        uploadBtn.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                capturedDataUrl = e.target.result;
+                preview.src = capturedDataUrl;
+                preview.style.display = 'block';
+                video.style.display = 'none';
+                showMsg('Image loaded. You can register now.', 'ok');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async e => {
             e.preventDefault();
-            alert('Student registered successfully!');
-            window.location.href = '/dashboard';
+            const studentId = document.getElementById('studentId').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const department = document.getElementById('department').value.trim();
+
+            if (!capturedDataUrl) {
+                return showMsg('Please capture or upload a face image first.', 'err');
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Registering...';
+            showMsg('Processing face registration...', 'info');
+
+            try {
+                const res = await fetch('/api/students/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        student_id: studentId,
+                        name: name,
+                        department: department,
+                        image: capturedDataUrl
+                    })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showMsg('Student registered successfully!', 'ok');
+                    if (stream) stream.getTracks().forEach(t => t.stop());
+                    setTimeout(() => window.location.href = '/dashboard', 1200);
+                } else {
+                    showMsg(data.error || 'Registration failed', 'err');
+                }
+            } catch (err) {
+                showMsg('Registration error: ' + err.message, 'err');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Register Student';
+            }
         });
     </script>
 </body>

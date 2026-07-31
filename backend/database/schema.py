@@ -1,3 +1,11 @@
+INSTRUCTOR_TABLE = """
+CREATE TABLE IF NOT EXISTS instructors (
+    username TEXT PRIMARY KEY,
+    password TEXT NOT NULL,
+    full_name TEXT NOT NULL
+);
+"""
+
 STUDENT_TABLE = """
 CREATE TABLE IF NOT EXISTS students (
     student_id TEXT PRIMARY KEY,

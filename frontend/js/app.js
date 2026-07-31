@@ -3,9 +3,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateExcel = document.getElementById('generateExcel');
     const reportBody = document.getElementById('reportBody');
 
+    function toInputDate(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    }
+
+    const startInput = document.getElementById('startDate');
+    const endInput = document.getElementById('endDate');
+    const today = new Date();
+    const weekAgo = new Date();
+    weekAgo.setDate(today.getDate() - 6);
+    if (!startInput.value) startInput.value = toInputDate(weekAgo);
+    if (!endInput.value) endInput.value = toInputDate(today);
+
     async function loadReport() {
-        const start = document.getElementById('startDate').value;
-        const end = document.getElementById('endDate').value;
+        const start = startInput.value;
+        const end = endInput.value;
         if (!start || !end) {
             reportBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,0.4);">Please select date range</td></tr>`;
             return;
@@ -24,24 +39,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    document.getElementById('startDate').addEventListener('change', loadReport);
-    document.getElementById('endDate').addEventListener('change', loadReport);
+    startInput.addEventListener('change', loadReport);
+    endInput.addEventListener('change', loadReport);
+    loadReport();
+    setInterval(loadReport, 10000);
 
     generateCsv.addEventListener('click', async () => {
-        const start = document.getElementById('startDate').value;
-        const end = document.getElementById('endDate').value;
+        const start = startInput.value;
+        const end = endInput.value;
         if (!start || !end) return alert('Select date range');
-        const res = await fetch(`/api/attendance/export/csv?start=${start}&end=${end}`);
-        const data = await res.json();
-        alert('CSV exported: ' + data.file);
+        window.location.href = `/api/attendance/export/csv?start=${start}&end=${end}`;
     });
 
     generateExcel.addEventListener('click', async () => {
-        const start = document.getElementById('startDate').value;
-        const end = document.getElementById('endDate').value;
+        const start = startInput.value;
+        const end = endInput.value;
         if (!start || !end) return alert('Select date range');
-        const res = await fetch(`/api/attendance/export/excel?start=${start}&end=${end}`);
-        const data = await res.json();
-        alert('Excel exported: ' + data.file);
+        window.location.href = `/api/attendance/export/excel?start=${start}&end=${end}`;
     });
 });

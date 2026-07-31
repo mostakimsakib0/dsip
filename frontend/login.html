@@ -12,22 +12,48 @@
         <form id="loginForm">
             <div class="form-group">
                 <label>Instructor ID</label>
-                <input type="text" id="instructorId" placeholder="Enter your ID" required>
+                <input type="text" id="username" placeholder="Enter your ID" autocomplete="username" required>
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="password" placeholder="Enter password" required>
+                <input type="password" id="password" placeholder="Enter password" autocomplete="current-password" required>
             </div>
-            <button type="submit" class="btn">Sign In</button>
+            <button type="submit" class="btn" id="loginBtn">Sign In</button>
         </form>
+        <div class="msg" id="msg" style="text-align:center;margin-top:15px;color:#ff7675;font-size:14px;display:none;"></div>
         <div class="link">
-            Don't have an account? <a href="register.html">Register</a>
+            Default: instructor / cse434
         </div>
     </div>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            window.location.href = '/dashboard';
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const msg = document.getElementById('msg');
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.textContent = 'Signing in...';
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    window.location.href = '/dashboard';
+                } else {
+                    msg.style.display = 'block';
+                    msg.textContent = data.error || 'Login failed';
+                }
+            } catch (err) {
+                msg.style.display = 'block';
+                msg.textContent = 'Login error: ' + err.message;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
         });
     </script>
 </body>

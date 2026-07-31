@@ -14,6 +14,7 @@
         }
         .video-wrapper {
             flex: 1;
+            position: relative;
             background: rgba(255,255,255,0.05);
             border-radius: 15px;
             overflow: hidden;
@@ -24,8 +25,11 @@
             display: block;
         }
         .video-wrapper canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            display: none;
+            height: 100%;
         }
         .controls {
             display: flex;
@@ -58,8 +62,9 @@
                 <a href="/dashboard">Dashboard</a>
                 <a href="/attendance">Live Attendance</a>
                 <a href="/register">Register Student</a>
+                <a href="/students">Students</a>
                 <a href="/reports">Reports</a>
-                <a href="/">Logout</a>
+                <a href="#" id="logout">Logout</a>
             </div>
         </nav>
 
@@ -86,5 +91,6 @@
     </div>
 
     <script src="js/camera.js"></script>
+    <script src="js/logout.js"></script>
 </body>
 </html>

@@ -3,7 +3,13 @@ import numpy as np
 import pickle
 from datetime import datetime
 from backend.config import DATABASE_PATH, ATTENDANCE_COOLDOWN_MINUTES, CONFIDENCE_THRESHOLD
-from backend.database.schema import STUDENT_TABLE, ATTENDANCE_TABLE
+from backend.database.schema import INSTRUCTOR_TABLE, STUDENT_TABLE, ATTENDANCE_TABLE
+
+DEFAULT_INSTRUCTOR = {
+    'username': 'instructor',
+    'password': 'cse434',
+    'full_name': 'Course Instructor'
+}
 
 
 class DatabaseManager:
@@ -13,9 +19,37 @@ class DatabaseManager:
         self._create_tables()
 
     def _create_tables(self):
+        self.cursor.execute(INSTRUCTOR_TABLE)
         self.cursor.execute(STUDENT_TABLE)
         self.cursor.execute(ATTENDANCE_TABLE)
+        self._seed_instructor()
         self.conn.commit()
+
+    def _seed_instructor(self):
+        self.cursor.execute("SELECT COUNT(*) FROM instructors")
+        if self.cursor.fetchone()[0] == 0:
+            self.cursor.execute(
+                "INSERT INTO instructors (username, password, full_name) VALUES (?, ?, ?)",
+                (DEFAULT_INSTRUCTOR['username'], DEFAULT_INSTRUCTOR['password'], DEFAULT_INSTRUCTOR['full_name'])
+            )
+
+    def verify_instructor(self, username, password):
+        self.cursor.execute(
+            "SELECT username, full_name FROM instructors WHERE username = ? AND password = ?",
+            (username, password)
+        )
+        return self.cursor.fetchone()
+
+    def delete_student(self, student_id):
+        self.cursor.execute("DELETE FROM attendance WHERE student_id = ?", (student_id,))
+        self.cursor.execute("DELETE FROM students WHERE student_id = ?", (student_id,))
+        self.conn.commit()
+        return self.cursor.rowcount
+
+    def student_exists(self, student_id):
+        self.cursor.execute("SELECT name FROM students WHERE student_id = ?", (student_id,))
+        row = self.cursor.fetchone()
+        return row[0] if row else None
 
     def register_student(self, student_id, name, department, embedding):
         blob = pickle.dumps(embedding)
@@ -47,7 +81,7 @@ class DatabaseManager:
 
         self.cursor.execute(
             "INSERT INTO attendance (student_id, name, date, time, confidence) VALUES (?, ?, ?, ?, ?)",
-            (student_id, name, today, now, confidence)
+            (student_id, name, today, now, float(confidence))
         )
         self.conn.commit()
         return True
