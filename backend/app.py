@@ -4,7 +4,8 @@ from flask import Flask, render_template, redirect, session, url_for
 from flask_cors import CORS
 from backend.api.routes import api
 
-app = Flask(__name__, static_folder='../frontend', static_url_path='', template_folder='../frontend')
+app = Flask(__name__, static_folder='../frontend',
+            static_url_path='', template_folder='../frontend')
 app.secret_key = os.environ.get('SECRET_KEY', 'smart-attendance-cse434-secret')
 CORS(app, supports_credentials=True)
 app.register_blueprint(api, url_prefix='/api')
@@ -56,5 +57,9 @@ def reports():
     return render_template('reports.html')
 
 
-if __name__ == '__main__':
+def main():
     app.run(host='0.0.0.0', port=5000, debug=True)
+
+
+if __name__ == '__main__':
+    main()
