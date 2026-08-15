@@ -17,3 +17,6 @@ class FaceDetector:
         if len(faces) == 0:
             return None
         return faces[0]
+
+
+# vim: ts=4:et

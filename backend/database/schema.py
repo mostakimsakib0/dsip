@@ -26,3 +26,6 @@ CREATE TABLE IF NOT EXISTS attendance (
     FOREIGN KEY (student_id) REFERENCES students(student_id)
 );
 """
+
+
+# vim: ts=4:et

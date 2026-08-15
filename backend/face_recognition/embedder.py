@@ -8,3 +8,6 @@ class FaceEmbedder:
 
     def embedding_to_array(self, embedding):
         return np.array(embedding, dtype=np.float32)
+
+
+# vim: ts=4:et

@@ -22,3 +22,6 @@ class AttendanceTracker:
             'total': len(records),
             'records': records
         }
+
+
+# vim: ts=4:et

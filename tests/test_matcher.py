@@ -31,3 +31,6 @@ def test_recognition_threshold():
     matcher = FaceMatcher()
     assert matcher.is_recognized(0.5) is True
     assert matcher.is_recognized(0.2) is False
+
+
+# vim: ts=4:et

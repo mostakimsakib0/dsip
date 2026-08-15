@@ -30,7 +30,8 @@ class DatabaseManager:
         if self.cursor.fetchone()[0] == 0:
             self.cursor.execute(
                 "INSERT INTO instructors (username, password, full_name) VALUES (?, ?, ?)",
-                (DEFAULT_INSTRUCTOR['username'], DEFAULT_INSTRUCTOR['password'], DEFAULT_INSTRUCTOR['full_name'])
+                (DEFAULT_INSTRUCTOR['username'], DEFAULT_INSTRUCTOR['password'],
+                 DEFAULT_INSTRUCTOR['full_name'])
             )
 
     def verify_instructor(self, username, password):
@@ -41,13 +42,16 @@ class DatabaseManager:
         return self.cursor.fetchone()
 
     def delete_student(self, student_id):
-        self.cursor.execute("DELETE FROM attendance WHERE student_id = ?", (student_id,))
-        self.cursor.execute("DELETE FROM students WHERE student_id = ?", (student_id,))
+        self.cursor.execute(
+            "DELETE FROM attendance WHERE student_id = ?", (student_id,))
+        self.cursor.execute(
+            "DELETE FROM students WHERE student_id = ?", (student_id,))
         self.conn.commit()
         return self.cursor.rowcount
 
     def student_exists(self, student_id):
-        self.cursor.execute("SELECT name FROM students WHERE student_id = ?", (student_id,))
+        self.cursor.execute(
+            "SELECT name FROM students WHERE student_id = ?", (student_id,))
         row = self.cursor.fetchone()
         return row[0] if row else None
 
@@ -60,11 +64,13 @@ class DatabaseManager:
         self.conn.commit()
 
     def get_all_students(self):
-        self.cursor.execute("SELECT student_id, name, department FROM students")
+        self.cursor.execute(
+            "SELECT student_id, name, department FROM students")
         return self.cursor.fetchall()
 
     def get_all_embeddings(self):
-        self.cursor.execute("SELECT student_id, name, face_embedding FROM students")
+        self.cursor.execute(
+            "SELECT student_id, name, face_embedding FROM students")
         rows = self.cursor.fetchall()
         result = []
         for sid, name, blob in rows:
@@ -96,7 +102,8 @@ class DatabaseManager:
             return False
         last_time = datetime.strptime(row[0], "%H:%M:%S")
         now = datetime.now()
-        diff = (now - now.replace(hour=last_time.hour, minute=last_time.minute, second=last_time.second)).total_seconds()
+        diff = (now - now.replace(hour=last_time.hour,
+                minute=last_time.minute, second=last_time.second)).total_seconds()
         return diff < ATTENDANCE_COOLDOWN_MINUTES * 60
 
     def get_attendance_by_date(self, date):
@@ -117,3 +124,6 @@ class DatabaseManager:
 
     def close(self):
         self.conn.close()
+
+
+# vim: ts=4:et

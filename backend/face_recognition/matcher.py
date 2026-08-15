@@ -23,3 +23,6 @@ class FaceMatcher:
 
     def is_recognized(self, score):
         return score >= SIMILARITY_THRESHOLD
+
+
+# vim: ts=4:et

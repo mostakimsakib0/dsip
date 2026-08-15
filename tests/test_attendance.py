@@ -9,3 +9,6 @@ def test_register_and_retrieve():
     students = db.get_all_students()
     ids = [s[0] for s in students]
     assert '999' in ids
+
+
+# vim: ts=4:et

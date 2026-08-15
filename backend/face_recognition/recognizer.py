@@ -50,3 +50,6 @@ class FaceRecognizer:
                 })
 
         return results
+
+
+# vim: ts=4:et

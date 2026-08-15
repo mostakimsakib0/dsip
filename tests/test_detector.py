@@ -13,3 +13,6 @@ def test_detector_no_face():
     blank = np.zeros((480, 640, 3), dtype=np.uint8)
     faces = detector.detect(blank)
     assert len(faces) == 0
+
+
+# vim: ts=4:et

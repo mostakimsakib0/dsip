@@ -177,7 +177,8 @@ def attendance_report():
     records = tracker.get_report(start, end)
     return jsonify({
         'records': [
-            {'student_id': r[0], 'name': r[1], 'date': r[2], 'time': r[3], 'confidence': r[4]}
+            {'student_id': r[0], 'name': r[1], 'date': r[2],
+                'time': r[3], 'confidence': r[4]}
             for r in records
         ]
     })
@@ -203,3 +204,6 @@ def export_excel():
         return jsonify({'error': 'start and end dates required'}), 400
     path = reporter.generate_excel(start, end)
     return send_file(path, as_attachment=True, download_name=f'attendance_{start}_to_{end}.xlsx')
+
+
+# vim: ts=4:et
